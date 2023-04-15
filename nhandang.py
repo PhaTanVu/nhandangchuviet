@@ -1,11 +1,9 @@
 import io
-import fitz
 import numpy as np
 from PIL import Image
-import PyMuPDF
-from sympy import *
 import pytesseract
 import streamlit as st
+from sympy import *
 from skimage import io, color, filters, measure
 
 # Khởi tạo các biến ký hiệu
@@ -40,37 +38,30 @@ def extract_expressions(img_arr):
 
 # Streamlit app
 st.set_page_config(page_title="Nhận dạng biểu thức toán", page_icon="🧮")
-st.title("Nhận dạng biểu thức toán từ file PDF hoặc ảnh")
+st.title("Nhận dạng biểu thức toán từ ảnh")
 
 # File uploader
-file_type = st.sidebar.selectbox("Chọn loại file", ["Ảnh", "PDF"])
-if file_type == "Ảnh":
-    uploaded_file = st.file_uploader("Tải lên file ảnh", type=["jpg", "jpeg", "png"])
-else:
-    uploaded_file = st.file_uploader("Tải lên file PDF", type="pdf")
+uploaded_file = st.file_uploader("Tải lên file ảnh", type=["jpg", "jpeg", "png"])
 
 # Extract expressions button
 if st.button("Trích xuất biểu thức toán"):
     # Kiểm tra xem người dùng đã tải lên file hay chưa
     if uploaded_file is not None:
-        # Nếu là file ảnh
-        if file_type == "Ảnh":
-            img = Image.open(uploaded_file)
-            img_arr = np.array(img)
+        img = Image.open(uploaded_file)
+        img_arr = np.array(img)
 
-            # Extract expressions from the image
-            expressions = extract_expressions(img_arr)
+        # Extract expressions from the image
+        expressions = extract_expressions(img_arr)
 
-            # Display the extracted expressions
-if len(expressions) > 0:
-    st.write("Các biểu thức toán được trích xuất từ file ảnh:")
-    for expression in expressions:
-        # Hiển thị biểu thức dưới dạng LaTeX
-        st.latex(expression)
-        # Chuyển đổi biểu thức sang hình ảnh và hiển thị
-        expr_image = io.BytesIO()
-        render_latex(expression, expr_image, fontsize=20)
-        st.image(expr_image.getvalue())
-else:
-    st.write("Không tìm thấy biểu thức toán trong ảnh")   
-
+        # Display the extracted expressions
+        if len(expressions) > 0:
+            st.write("Các biểu thức toán được trích xuất từ ảnh:")
+            for expression in expressions:
+                # Hiển thị biểu thức dưới dạng LaTeX
+                st.latex(expression)
+                # Chuyển đổi biểu thức sang hình ảnh và hiển thị
+                expr_image = io.BytesIO()
+                render_latex(expression, expr_image, fontsize=20)
+                st.image(expr_image.getvalue())
+        else:
+            st.write("Không tìm thấy biểu thức toán trong ảnh")
