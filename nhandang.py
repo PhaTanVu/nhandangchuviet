@@ -1,10 +1,14 @@
 import io
+import sympy
+sympy.__version__
 import numpy as np
 from PIL import Image
 import pytesseract
 import streamlit as st
 from sympy import *
-from skimage import io, color, filters, measure
+from sympy.printing.latex import print_latex
+from skimage import io, filters, measure, color
+from sympy.printing.latex import render_latex
 
 # Khởi tạo các biến ký hiệu
 x, y, z = symbols('x y z')
@@ -62,6 +66,8 @@ if st.button("Trích xuất biểu thức toán"):
                 # Chuyển đổi biểu thức sang hình ảnh và hiển thị
                 expr_image = io.BytesIO()
                 render_latex(expression, expr_image, fontsize=20)
-                st.image(expr_image.getvalue())
+                expr_image.seek(0)
+                st.image(Image.open(expr_image))
+
         else:
             st.write("Không tìm thấy biểu thức toán trong ảnh")
